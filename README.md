@@ -309,4 +309,13 @@ _(Current features: Fashion object detection from images, videos, simple Web app
 * [ ] Improve Dockerfile & CI/CD
 * [ ] DVC integration
 
+______________________________________________________________________
 
+## 📬 Contact
+**👩‍💻 Author:** [Lê Thị Diễm My](https://github.com/mylethidiem)
+📧 **Email:** lethidiemmy961996@gmail.com
+🔗 **LinkedIn:** [Thi-Diem-My Le](https://www.linkedin.com/in/mylethidiem/)
+
+______________________________________________________________________
+
+> _"Learning, Building, and Growing in Data & AI."_ 🌍
