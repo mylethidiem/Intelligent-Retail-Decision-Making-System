@@ -1,19 +1,23 @@
 <div align="center">
-  <h1>💡 Omni Synesis</h1>
-  <p><strong>Multimodal Retrieval & Intelligence Platform (v0: Fashion Object Detection)</strong></p>
+
+# 💡 Intelligent Retail Decision Making System
+### **Unified Platform for Forecasting • Segmentation • Inventory Optimization**
+
+A modular AI system designed to support **data-driven retail operations** powered by  
+**Machine Learning • XAI • Multimodal Intelligence**.
+
 </div>
 
+---
 
 <div align="center">
   <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" />
   <img src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" />
   <img src="https://img.shields.io/badge/Gradio-FF4B4B?style=for-the-badge&logo=gradio&logoColor=white" />
-  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-0db7ed?style=for-the-badge&logo=docker&logoColor=white" />
 </div>
 
 <div align="center">
-
-<!-- **🔥 Production-grade FastAPI backend + friendly Gradio frontend for fashion object detection.** -->
 
 [✨ Features](#-features) • [📁 Project Structure](#-project-structure) • [🚀 Quick Start](#-quick-start) • [🔌 API Endpoints](#-api-endpoints) • [🤖 Model](#-model-information) • [🛠️ Troubleshooting](#-troubleshooting) • [🐳 Docker](#-docker-deployment) • [🗺️ Roadmap](#-roadmap)
 
@@ -22,28 +26,47 @@
 ---
 
 ## 📋 Overview
-**Omni Synesis** is a multi-module project aiming at **Multimodal Retrieval & Information**.
-This initial version focuses on **Fashion Object Detection**: a **FastAPI** backend with a **Gradio** UI powered by the Hugging Face model `yainage90/fashion-object-detection`.
-You get a secure REST API with automatic **OpenAPI docs**, structured logging, and environment-based configuration.
+**Intelligent Retail Decision Making System** is a multi-module AI platform designed to enhance  
+**retail operations, analytics, and automation**.
 
-> Other modules (Text Retrieval, Text Classification, RAG, etc.) are planned—see [🗺️ Roadmap](#-roadmap).
+This system evolves from foundational modules such as:
+
+- **Inventory Transfer Optimization**
+- **Customer Segmentation**
+- **Sales Forecasting with Explainable AI (SHAP/XAI)**
+
+The current public release focuses on **Fashion Object Detection** as the first deployed module, serving as the core backbone for multimodal retail intelligence (image → insight).
+
+Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) are planned in the [🗺️ Roadmap](#-roadmap).
 
 ---
 
 ## ✨ Features
 
-### 🎛️ Core
-- **🤖 AI detection** via Hugging Face/Transformers.
-- **📦 Batch** processing for multiple images.
-- **📖 OpenAPI** interactive docs at `/api/docs`.
-- **📝 Structured logging** for debugging/monitoring.
+### 🧠 Core Intelligence
+- **Multimodal Object Detection** (images → bounding boxes + labels)
+- **Support for future Retail ML models**:
+  - Sales Forecasting  
+  - XAI-enhanced predictions  
+  - Customer Segmentation  
+  - Inventory Transfer Optimization  
 
-### 🖥️ Frontend (Gradio)
-- **📷 Single** & **📚 batch** uploads.
-- **🎚️ Adjustable confidence** threshold.
-- **📊 Visualization**: bounding boxes + confidence scores.
-- **🏥 Health status**.
-- **🖼️ Example images** for quick testing.
+### 🖥️ Frontend (Gradio / Web UI)
+- Single & batch image uploads  
+- Adjustable confidence threshold  
+- Real-time visualization and inference  
+- Built-in example images  
+
+### ⚙️ Backend (FastAPI)
+- High-performance API  
+- Auto-generated **OpenAPI docs** at `/api/docs`  
+- Structured logging + configuration through `.env`  
+- Ready for **Docker deployment**  
+
+### 🔐 Operational Features
+- Token-based authentication (JWT)
+- Environment-based settings
+- Modular service & routing design
 
 ### ⚙️ Ops
 - **.env** driven config (name/port/model/threshold/token…).
@@ -53,44 +76,22 @@ You get a secure REST API with automatic **OpenAPI docs**, structured logging, a
 
 <video controls src="static/picture/demo.mp4" title="Fashion Object Detection Demo"></video>
 
-### 🧠 Core Functionality
-
-- **🤖 AI-Powered Detection**: Precise identification of fashion items using Hugging Face Transformers.
-- **📦 Batch Processing**: Supports simultaneous processing of multiple images.
-
-### 🎨 Frontend Features
-
-- **📷 Single Image Upload**: Process individual images with visualized results.
-- **📚 Batch Processing**: Handle multiple images in a single request.
-- **🎚️ Adjustable Confidence Threshold**: Customize detection sensitivity.
-- **📊 Real-Time Visualization**: Displays bounding boxes with confidence scores.
-- **🏥 Health Monitoring**: Real-time API status monitoring.
-- **🖼️ Example Images**: Pre-loaded images for quick testing.
-
-### 🔧 Technical Features
-
-- **📖 OpenAPI Documentation**: Interactive API documentation at `/api/docs`.
-- **🐳 Docker Support**: Containerized deployment for scalability.
-- **📝 Structured Logging**: Professional logging for debugging and monitoring.
-- **⚙️ Configurable Settings**: Environment-based configuration for flexibility.
-
 ## 📁 Project Structure
 
-```
-omni-synesis/
-├── app/                    # Core application code
-│   ├── api/                # FastAPI routes and endpoints
-│   ├── core/               # Configuration and security utilities
-│   ├── models/             # Pydantic schemas for request/response validation
-│   ├── services/           # Business logic and model handling
-│   ├── utils/              # Helper functions and utilities
-│   ├── frontend/           # Gradio UI implementation
-│   └── main.py             # FastAPI application entry point
-├── requirements.txt        # Python dependencies
-├── Dockerfile              # Docker configuration
-└── README.md               # Project documentation
-
-```
+```txt
+intelligent-retail-system/
+├── app/
+│   ├── api/                # FastAPI API endpoints
+│   ├── core/               # Config, security, environment settings
+│   ├── models/             # Pydantic schemas
+│   ├── services/           # Business logic & ML pipelines
+│   ├── utils/              # Helper utilities
+│   ├── frontend/           # Gradio interface
+│   └── main.py             # Entry point for FastAPI
+├── requirements.txt
+├── Dockerfile
+└── README.md
+````
 
 ## 🔌 API Endpoints
 
@@ -133,7 +134,7 @@ pip install pytest pytest-cov black isort ruff mypy
 
 ```bash
 git clone <your-repository-url>
-cd omni-synesis
+cd intelligent-retail-system
 ```
 
 ### 2. 🐍 Create a Virtual Environment
@@ -142,8 +143,8 @@ Using Conda:
 
 ```bash
 # Conda (recommended)
-conda create -n omni python=3.11 -y
-conda activate omni
+conda create -n retailsys python=3.11 -y
+conda activate retailsys
 
 # or venv
 python -m venv .venv
@@ -164,7 +165,7 @@ Create a `.env` file in the project root:
 
 ```
 # .env
-APP_NAME=Omni Synesis API
+APP_NAME=Retail AI System API
 VERSION=1.0.0
 DEBUG=False
 HOST=0.0.0.0
@@ -262,10 +263,10 @@ curl -X GET "http://localhost:5050/api/v1/health" -H "X-Token: eyJhbGciOiJIUzI1N
 
 ```bash
 # Build
-docker build -t omni-synesis .
+docker build -t retailsys .
 
 # Run (reads .env; maps the same port)
-docker run --env-file .env -p 5050:5050 omni-synesis
+docker run --env-file .env -p 5050:5050 retailsys
 # → API: http://localhost:5050
 
 ```
@@ -299,21 +300,13 @@ For assistance:
 
 _(Current features: Fashion object detection from images, videos, simple Web app)_
 
-- [ ] Text Retrieval
-- [ ] **Text Classification** (KNN, KMeans, Decision Tree) (3.1)
-- [ ] Text Classification Using Ensemble Learning (4.1)
-- [ ] **Explain Model's Predictions** for DA/DS with SHAP (4.1)
-- [ ] **Generic object detection** (images/videos)
-- [ ] Add **RAG Chatbot** (PDF) via LangChain (1.2)
-- [ ] Try some demo with Streamlit (1.1)
-- [ ] Improve more Gradio (M4)
-- [ ] Improve more Dockerfile (M4)
-- [ ] DVC integration (M4)
-- [ ] Text Classification Naive Bayes (2.2)
-- [ ] A smart **face recognition system** (2.1 part 1)
-- [ ] **Heart Disease Diagnosis** (3.2, 4.2)
-- [ ] Create Android app
+* [ ] Sales Forecasting with XAI (SHAP)
+* [ ] Customer Segmentation Dashboard
+* [ ] Inventory Optimization Engine
+* [ ] RAG Chatbot for Retail Handbook
+* [ ] Product Similarity Search (CLIP)
+* [ ] Multimodal Retrieval (image + text)
+* [ ] Improve Dockerfile & CI/CD
+* [ ] DVC integration
 
-----
-## ℹ️ Reference:
-- Fashion object detection from images, videos: https://github.com/dangnha/fashion-detection-app
+
