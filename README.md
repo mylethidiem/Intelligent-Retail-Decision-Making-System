@@ -73,8 +73,7 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 - **🐳 Dockerized** build & run.
 
 ### 🎬 Demo
-
-<video controls src="static/picture/demo.mp4" title="Fashion Object Detection Demo"></video>
+Demo link: https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System
 
 ## 📁 Project Structure
 
