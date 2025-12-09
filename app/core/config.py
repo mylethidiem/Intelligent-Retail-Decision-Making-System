@@ -3,7 +3,7 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Application
-    APP_NAME: str = "Omni Synesis"
+    APP_NAME: str = "💡 Intelligent Retail Decision Making System"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
 

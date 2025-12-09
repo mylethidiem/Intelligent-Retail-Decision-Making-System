@@ -18,8 +18,7 @@ API_BATCH_ENDPOINT = f"{API_BASE_URL}/api/{API_VERSION}/detect/batch"
 # Authentication token (in production, use proper auth flow)
 # This should match backend token
 # API_TOKEN = "your jwt token"
-API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJleHAiOjE3NjE1NTY0NzR9.MmTycbwyldhk6oB2P7xcwVuMj9Sf8t6JkJaSnmb9qxI"
-SHOW_GRADIO_API = False
+SHOW_GRADIO_API = "undocumented"
 
 class FashionDetectionClient:
     """Client for interacting with the Fashion Detection API"""
@@ -327,16 +326,10 @@ def create_gradio_interface():
 
     # Create the Gradio interface
     with gr.Blocks(
-        title="Omni Synesis",
-        theme=gr.themes.Soft(),
-        css="""
-        .gradio-container {max-width: 1200px !important}
-        .success {color: green; font-weight: bold;}
-        .error {color: red; font-weight: bold;}
-        """
+        title="💡 Intelligent Retail Decision Making System ",
     ) as demo:
 
-        gr.Markdown("# 💡 Omni Synesis")
+        gr.Markdown("# 💡 Intelligent Retail Decision Making System")
         gr.Markdown("Upload images to detect fashion items using our AI-powered API")
 
         # API Health Section
@@ -397,7 +390,7 @@ def create_gradio_interface():
             fn=lambda images, threshold: predict_batch_images(convert_to_pil_images(images), threshold),
             inputs=[batch_images, batch_threshold],
             outputs=[batch_output_images, batch_output_text],
-            show_api=SHOW_GRADIO_API
+            api_visibility=SHOW_GRADIO_API
         )
         # Examples
         gr.Examples(
@@ -414,14 +407,14 @@ def create_gradio_interface():
         health_btn.click(
             fn=check_api_health,
             outputs=health_output,
-            show_api=SHOW_GRADIO_API
+            api_visibility=SHOW_GRADIO_API
         )
 
         single_btn.click(
             fn=predict_single_image,
             inputs=[single_image, threshold_slider],
             outputs=[single_output_image, single_output_text],
-            show_api=SHOW_GRADIO_API
+            api_visibility=SHOW_GRADIO_API
         )
 
     return demo
@@ -436,5 +429,11 @@ if __name__ == "__main__":
         server_port=7860,
         share=True,
         debug=True,
-        show_api=SHOW_GRADIO_API
+        footer_links=["gradio", "settings"],
+        theme=gr.themes.Soft(),
+        css="""
+        .gradio-container {max-width: 1200px !important}
+        .success {color: green; font-weight: bold;}
+        .error {color: red; font-weight: bold;}
+        """
     )

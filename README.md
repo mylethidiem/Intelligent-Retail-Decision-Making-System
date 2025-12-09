@@ -3,7 +3,7 @@
 # 💡 Intelligent Retail Decision Making System
 ### **Unified Platform for Forecasting • Segmentation • Inventory Optimization**
 
-A modular AI system designed to support **data-driven retail operations** powered by  
+A modular AI system designed to support **data-driven retail operations** powered by
 **Machine Learning • XAI • Multimodal Intelligence**.
 
 </div>
@@ -26,7 +26,7 @@ A modular AI system designed to support **data-driven retail operations** powere
 ---
 
 ## 📋 Overview
-**Intelligent Retail Decision Making System** is a multi-module AI platform designed to enhance  
+**Intelligent Retail Decision Making System** is a multi-module AI platform designed to enhance
 **retail operations, analytics, and automation**.
 
 This system evolves from foundational modules such as:
@@ -46,22 +46,22 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 ### 🧠 Core Intelligence
 - **Multimodal Object Detection** (images → bounding boxes + labels)
 - **Support for future Retail ML models**:
-  - Sales Forecasting  
-  - XAI-enhanced predictions  
-  - Customer Segmentation  
-  - Inventory Transfer Optimization  
+  - Sales Forecasting
+  - XAI-enhanced predictions
+  - Customer Segmentation
+  - Inventory Transfer Optimization
 
 ### 🖥️ Frontend (Gradio / Web UI)
-- Single & batch image uploads  
-- Adjustable confidence threshold  
-- Real-time visualization and inference  
-- Built-in example images  
+- Single & batch image uploads
+- Adjustable confidence threshold
+- Real-time visualization and inference
+- Built-in example images
 
 ### ⚙️ Backend (FastAPI)
-- High-performance API  
-- Auto-generated **OpenAPI docs** at `/api/docs`  
-- Structured logging + configuration through `.env`  
-- Ready for **Docker deployment**  
+- High-performance API
+- Auto-generated **OpenAPI docs** at `/api/docs`
+- Structured logging + configuration through `.env`
+- Ready for **Docker deployment**
 
 ### 🔐 Operational Features
 - Token-based authentication (JWT)
@@ -164,7 +164,7 @@ Create a `.env` file in the project root:
 
 ```
 # .env
-APP_NAME=Retail AI System API
+APP_NAME=Intelligent Retail Decision Making System
 VERSION=1.0.0
 DEBUG=False
 HOST=0.0.0.0
