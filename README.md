@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/mylethidiem/Intelligent-Retail-Decision-Making-System/refs/heads/main/static/assets/intelligent_retail.png" alt="Intelligent-Retail-Decision-Making-System Banner" width="100%">
+
 # 💡 Intelligent Retail Decision Making System
 ### **Unified Platform for Forecasting • Segmentation • Inventory Optimization**
 
@@ -41,6 +43,9 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 
 ---
 
+### 🎬 Demo
+- [Hugging Face demo link](https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System)
+
 ## ✨ Features
 
 ### 🧠 Core Intelligence
@@ -72,8 +77,6 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 - **.env** driven config (name/port/model/threshold/token…).
 - **🐳 Dockerized** build & run.
 
-### 🎬 Demo
-Demo link: https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System
 
 ## 📁 Project Structure
 
