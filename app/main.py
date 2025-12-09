@@ -22,7 +22,7 @@ app = FastAPI(
 
 access_token = create_access_token(
     data={"sub": "test_user"},
-    expires_delta=timedelta(minutes=30000)
+    expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 )
 print(f"Generated test token: {access_token}")
 

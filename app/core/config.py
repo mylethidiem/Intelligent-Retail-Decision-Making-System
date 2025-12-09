@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     # Security
     SECRET_KEY: str = "xxx"
+    API_TOKEN: str = "xxx"
     ALGORITHM: str = ".xxx"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 

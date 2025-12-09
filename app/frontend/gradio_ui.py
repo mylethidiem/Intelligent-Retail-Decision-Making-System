@@ -6,6 +6,8 @@ from typing import List, Dict, Any
 from datetime import datetime
 import os
 from app.utils.logger import logger
+from app.core.config import settings
+import subprocess
 
 # Configuration
 API_BASE_URL = "http://localhost:5050"  # API port
@@ -17,13 +19,12 @@ API_BATCH_ENDPOINT = f"{API_BASE_URL}/api/{API_VERSION}/detect/batch"
 
 # Authentication token (in production, use proper auth flow)
 # This should match backend token
-# API_TOKEN = "your jwt token"
 SHOW_GRADIO_API = "undocumented"
 
 class FashionDetectionClient:
     """Client for interacting with the Fashion Detection API"""
 
-    def __init__(self, base_url: str = API_BASE_URL, token: str = API_TOKEN):
+    def __init__(self, base_url: str = API_BASE_URL, token: str = settings.API_TOKEN):
         self.base_url = base_url
         self.token = token
         self.headers = {"X-Token": token}
@@ -425,8 +426,8 @@ gradio_app = create_gradio_interface()
 if __name__ == "__main__":
     # Run Gradio standalone
     gradio_app.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
+        # server_name="0.0.0.0",
+        # server_port=7860,
         share=True,
         debug=True,
         footer_links=["gradio", "settings"],
