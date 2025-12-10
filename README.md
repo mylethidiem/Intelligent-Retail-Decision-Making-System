@@ -41,7 +41,7 @@ The current public release focuses on **Fashion Object Detection** as the first 
 Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) are planned in the [🗺️ Roadmap](#-roadmap).
 
 ### 🎬 Demo
-- [Hugging Face demo link](https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System)
+- [You can run the Hugging Face demo here](https://elizabethmyn-intelligent-retail-decision-making-system.hf.space/)
 
 ---
 
@@ -310,6 +310,10 @@ _(Current features: Fashion object detection from images, videos, simple Web app
 * [ ] Multimodal Retrieval (image + text)
 * [ ] Improve Dockerfile & CI/CD
 * [ ] DVC integration
+
+# 📃 **Relate work**
+- [My HuggingFace Space for Intelligent Retail Decision Making System](https://elizabethmyn-intelligent-retail-decision-making-system.hf.space/)
+- [My Note for this project](https://www.notion.so/Intelligent-Retail-Decision-Making-System-2c30730a967380bd9139fd540ffb50f8)
 
 ______________________________________________________________________
 
