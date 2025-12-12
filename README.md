@@ -312,7 +312,7 @@ _(Current features: Fashion object detection from images, videos, simple Web app
 * [ ] DVC integration
 
 # 📃 **Relate work**
-- [My HuggingFace Space for Intelligent Retail Decision Making System](https://elizabethmyn-intelligent-retail-decision-making-system.hf.space/)
+- [My HuggingFace Space for Intelligent Retail Decision Making System](https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System)
 - [My Note for this project](https://www.notion.so/Intelligent-Retail-Decision-Making-System-2c30730a967380bd9139fd540ffb50f8)
 
 ______________________________________________________________________
