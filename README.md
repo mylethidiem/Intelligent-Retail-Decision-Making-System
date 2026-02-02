@@ -43,6 +43,9 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 ### 🎬 Demo
 - [You can run the Hugging Face demo here](https://elizabethmyn-intelligent-retail-decision-making-system.hf.space/)
 
+### 📝Notion notes for visions, features checklist
+- [Please read here](https://www.notion.so/Intelligent-Retail-Decision-Making-System-2c30730a967380bd9139fd540ffb50f8?source=copy_link)
+
 ---
 
 
