@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "mylethidiem/add_ci" ]
+    branches: [ "main", "add_ci" ]
   pull_request:
     branches: [ "main" ]
 
@@ -51,7 +51,7 @@ jobs:
         tags: |
           type=ref,event=branch
           type=ref,event=pr
-          type=sha,prefix={{branch}}-
+          type=sha,format=short,prefix=sha-,separator=
           type=raw,value=latest,enable={{is_default_branch}}
     
     - name: Build and push Docker image
@@ -69,8 +69,10 @@ jobs:
       if: github.event_name != 'pull_request'
       run: |
         # Use the branch tag (e.g., dev, main)
-        IMAGE_TAG="${{ env.REGISTRY }}/${{ steps.image-name.outputs.value }}:${{ github.ref_name }}"
+        IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+        echo "Testing with tag: ${IMAGE_TAG}"
+
         docker run --rm -d -p 5050:5050 --name test-container ${IMAGE_TAG}
         sleep 30
-        curl -f http://localhost:5050/api/v1/health || exit 1
+        curl -f http://localhost:5050/api/v1/health || (docker logs test-container && exit 1)
         docker stop test-container
