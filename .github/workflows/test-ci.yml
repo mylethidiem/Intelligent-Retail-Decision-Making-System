@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "add_ci" ]
+    branches: [ "**" ] # run for all commit
   pull_request:
-    branches: [ "main" ]
+    branches: [ "**" ] # all pull request
 
 env:
   REGISTRY: ghcr.io
