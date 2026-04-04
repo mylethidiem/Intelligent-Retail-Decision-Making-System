@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "add_ci" ]
+    branches: [ "main", "mylethidiem/add_ci" ]
   pull_request:
     branches: [ "main" ]
 
