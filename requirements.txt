@@ -1,20 +1,24 @@
+# Core Web Framework
 fastapi
 uvicorn
-gradio
-pillow
-torch
-transformers
-python-multipart
 pydantic
-python-dotenv
-python-jose
-passlib
-bcrypt
-aiofiles
-pytest
-pytest-asyncio
-httpx
 pydantic_settings
-timm
-opencv-python
-protobuf
+python-multipart
+
+# Auth & Security
+python-dotenv
+python-jose[cryptography]
+passlib[bcrypt]
+
+# AI & Computer Vision
+# torch
+# torchvision (Install directly in Dockerfile)
+# pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+transformers
+timm>=0.9.0
+pillow
+opencv-python-headless
+
+# UI & Utilities
+gradio
+requests

@@ -1,0 +1,11 @@
+.git
+.venv
+.env
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.db
+.ipynb_checkpoints
+data/              # If data too big, let use Volume instead COPY into Image
+models/*.pth       # If model is available in server
