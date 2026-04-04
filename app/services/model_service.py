@@ -1,3 +1,4 @@
+import os
 import torch
 from transformers import AutoImageProcessor, AutoModelForObjectDetection
 from PIL import Image
@@ -29,6 +30,11 @@ class ModelService:
     
     def load_model(self):
         """Load the model and processor"""
+        if os.environ.get("TESTING") == "1":
+            logger.warning("Skipping model load (TESTING=1)")
+            self.image_processor = None
+            self.model = None
+            return
         try:
             logger.info(f"Loading model from {settings.MODEL_CHECKPOINT}")
             self.image_processor = AutoImageProcessor.from_pretrained(settings.MODEL_CHECKPOINT)

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -55,8 +57,10 @@ try:
 except ImportError as e:
     logger.warning(f"Could not load Gradio frontend: {e}")
 
-# Serve static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Serve static files (optional directory — avoids startup failure when missing)
+_static_dir = Path("static")
+if _static_dir.is_dir():
+    app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
 
 @app.get("/")
 async def root():

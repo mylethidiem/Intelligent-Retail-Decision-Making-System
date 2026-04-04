@@ -14,3 +14,18 @@ select = ["E","F","I","UP","B"]  # style, bugbear, upgrade…
 [tool.mypy]
 python_version = "3.11"
 strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --strict-markers"
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+omit = ["app/frontend/*"]
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+skip_covered = false

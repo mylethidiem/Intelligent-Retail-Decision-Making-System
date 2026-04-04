@@ -1,0 +1,4 @@
+# Local dev and CI: install after requirements.txt (+ torch in CI/Dockerfile pattern)
+pytest>=8.0
+pytest-cov>=4.0
+httpx>=0.27.0
