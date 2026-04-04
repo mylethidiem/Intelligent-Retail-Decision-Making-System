@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
+import gradio as gr
+from app.frontend.gradio_ui import create_gradio_interface
 from app.core.config import settings
 from app.api.routes import detection, health
 from app.utils.logger import logger
@@ -41,9 +43,15 @@ app.include_router(detection.router, prefix=settings.API_PREFIX)
 
 # Import and mount Gradio frontend
 try:
-    from app.frontend.gradio_ui import create_gradio_interface
-    gradio_app = create_gradio_interface()
-    app.mount("/ui", gradio_app)
+    gradio_interface = create_gradio_interface(use_direct_service=True)
+    # root_path must match the mount path so the browser requests
+    # /ui/gradio_api/... instead of /gradio_api/... (fixes Examples/file 404).
+    app = gr.mount_gradio_app(
+        app,
+        gradio_interface,
+        path="/ui",
+        root_path="/ui",
+    )
 except ImportError as e:
     logger.warning(f"Could not load Gradio frontend: {e}")
 
@@ -52,8 +60,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():
-    """Redirect to API documentation"""
-    return RedirectResponse(url="/api/docs")
+    """Redirect to Gradio UI"""
+    return RedirectResponse(url="/ui")
 
 @app.get("/ui-redirect")
 async def ui_redirect():

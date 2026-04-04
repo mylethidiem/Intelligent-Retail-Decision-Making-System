@@ -209,3 +209,5 @@ __marimo__/
 # Gradio / Streamlit temp
 .gradio/
 .streamlit/
+
+*.Identifier

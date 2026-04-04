@@ -20,7 +20,7 @@ A modular AI system designed to support **data-driven retail operations** powere
 
 <div align="center">
 
-[✨ Features](#-features) • [📁 Project Structure](#-project-structure) • [🚀 Quick Start](#-quick-start) • [🔌 API Endpoints](#-api-endpoints) • [🤖 Model](#-model-information) • [🛠️ Troubleshooting](#-troubleshooting) • [🐳 Docker](#-docker-deployment) • [🗺️ Roadmap](#-roadmap)
+[✨ Features](#-features) • [🔀 Request flow](#-request-flow-sequence-diagrams) • [📁 Project Structure](#-project-structure) • [🚀 Quick Start](#-quick-start) • [🔌 API Endpoints](#-api-endpoints) • [🤖 Model](#-model-information) • [🛠️ Troubleshooting](#-troubleshooting) • [🐳 Docker](#-docker-deployment) • [🗺️ Roadmap](#-roadmap)
 
 </div>
 
@@ -48,6 +48,92 @@ Future modules (Forecasting, Segmentation, Recommendation, RAG Chatbot, etc.) ar
 
 ---
 
+## 🔀 Request flow (sequence diagrams)
+
+The diagrams below describe how a **single-image detection** request moves through the stack when using the **Gradio UI** as the client (the same API is also callable directly with `curl`, Postman, or another service).
+
+### Health check (before Gradio runs detection)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant Gradio as Gradio UI
+    participant Client as FashionDetectionClient
+    participant API as FastAPI (/api/v1/health)
+
+    User->>Gradio: Click "Check API Health" / run detection
+    Gradio->>Client: check_health()
+    Client->>API: GET /api/v1/health
+    API-->>Client: HealthResponse (status, version, model_loaded, device)
+    Client-->>Gradio: Parsed JSON + success flag
+    Gradio-->>User: Status text in UI
+```
+
+### Single image: upload → detect → visualize
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant Gradio as Gradio UI
+    participant Client as FashionDetectionClient
+    participant API as FastAPI (/detect)
+    participant Auth as API auth (X-Token)
+    participant DS as DetectionService
+    participant Utils as image_processor
+    participant MS as ModelService
+    participant HF as HF model (transformers)
+
+    User->>Gradio: Upload image + set threshold + Detect
+    Gradio->>Client: predict_single_image(image, threshold)
+    opt Optional prologue
+        Client->>API: GET /api/v1/health
+        API-->>Client: OK / error
+    end
+    Client->>API: POST /api/v1/detect/image (multipart file, threshold, X-Token)
+    API->>Auth: Verify X-Token (router dependency)
+    Auth-->>API: Authorized
+    API->>DS: detect_from_bytes(image_bytes, threshold)
+    DS->>Utils: validate_image, convert_to_rgb, metadata
+    Utils-->>DS: PIL Image (RGB)
+    DS->>MS: detect_objects(image, threshold)
+    MS->>MS: preprocess (AutoImageProcessor)
+    MS->>HF: model forward (no_grad)
+    HF-->>MS: raw outputs
+    MS->>MS: post_process_object_detection (threshold, boxes)
+    MS-->>DS: detections, processing_time, image_size
+    DS-->>API: DetectionResponse
+    API-->>Client: JSON
+    Client-->>Gradio: Parsed result
+    Gradio->>Gradio: draw_bounding_boxes_pil (optional)
+    Gradio-->>User: Annotated image + summary text
+```
+
+### Batch images (high level)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant Gradio as Gradio UI
+    participant Client as FashionDetectionClient
+    participant API as FastAPI
+
+    User->>Gradio: Upload multiple images + Process Batch
+    Gradio->>Client: detect_batch_images(images, threshold)
+    Client->>API: POST /api/v1/detect/batch (multiple files)
+    loop Each file on server
+        API->>API: Same pipeline as single image
+    end
+    API-->>Client: list[DetectionResponse | ErrorResponse]
+    Client-->>Gradio: Results per image
+    Gradio-->>User: Gallery + batch summary
+```
+
+> **Rendering:** Mermaid renders on GitHub and many Markdown viewers. If your editor preview does not support Mermaid, paste the fenced blocks into [the Mermaid Live Editor](https://mermaid.live/).
+
+---
 
 ## ✨ Features
 
@@ -196,6 +282,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 5050
 ```
 
 The API is accessible at: 🌐 `http://localhost:5050`
+Or can be access at http://127.0.0.1:5050
 
 ### 6. 🔑 Obtain a JWT Token
 

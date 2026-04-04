@@ -2,7 +2,7 @@ import gradio as gr
 import requests
 from PIL import Image
 import io
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime
 import os
 from app.utils.logger import logger
@@ -11,10 +11,18 @@ import subprocess
 
 # Configuration
 API_BASE_URL = "http://localhost:5050"  # API port
-API_VERSION = "v1"
-API_ENDPOINT = f"{API_BASE_URL}/api/{API_VERSION}/detect/image"
-API_HEALTH_ENDPOINT = f"{API_BASE_URL}/api/{API_VERSION}/health"
-API_BATCH_ENDPOINT = f"{API_BASE_URL}/api/{API_VERSION}/detect/batch"
+API_PREFIX = settings.API_PREFIX
+
+def _api_url(path: str) -> str:
+    """Join API URL robustly (handles API_PREFIX with/without leading slash)."""
+    base = API_BASE_URL.rstrip("/")
+    if not path.startswith("/"):
+        path = "/" + path
+    return base + path
+
+API_ENDPOINT = _api_url(f"{API_PREFIX}/detect/image")
+API_HEALTH_ENDPOINT = _api_url(f"{API_PREFIX}/health")
+API_BATCH_ENDPOINT = _api_url(f"{API_PREFIX}/detect/batch")
 
 
 # Authentication token (in production, use proper auth flow)
@@ -40,6 +48,7 @@ class FashionDetectionClient:
             data["success"] = True
             return data
         except requests.exceptions.RequestException as e:
+            logger.error(f"Health check failed: {str(e)}")
             return {
                 "success": False,
                 "error": f"Health check failed: {str(e)}",
@@ -178,8 +187,19 @@ def draw_bounding_boxes_pil(image: Image.Image, detections: List[Dict[str, Any]]
 
 def format_detection_results(result: Dict[str, Any]) -> str:
     """Format detection results as text"""
+    if hasattr(result, "model_dump"):
+        result = result.model_dump()  # pydantic v2
+    elif hasattr(result, "dict"):
+        result = result.dict()  # pydantic v1
+
     if not result.get('success', False):
-        return f"❌ Error: {result.get('error', 'Unknown error')}"
+        err = (
+            result.get("error")
+            or result.get("error_code")
+            or result.get("message")
+            or "Unknown error"
+        )
+        return f"❌ Error: {err}"
 
     detections = result.get('detections', [])
     processing_time = result.get('processing_time', 0)
@@ -200,17 +220,39 @@ def format_detection_results(result: Dict[str, Any]) -> str:
 
     return result_text
 
-def create_gradio_interface():
+def create_gradio_interface(use_direct_service: bool = False):
     """Create the Gradio interface"""
 
-    # Initialize API client
-    api_client = FashionDetectionClient()
+    # Initialize API client only when running standalone.
+    api_client = None if use_direct_service else FashionDetectionClient()
 
-    def predict_single_image(image: Image.Image, threshold: float) -> tuple:
+    # Direct mode avoids HTTP endpoint/token mismatches when Gradio is mounted.
+    from app.services.detection_service import DetectionService
+
+    def predict_single_image(image: Optional[Image.Image], threshold: float) -> tuple:
         """Predict objects in a single image"""
         logger.info(">>> predict_single_image ping clicked")
         try:
-            # Check API health first
+            if image is None:
+                return None, "Please upload an image."
+
+            # Extra robustness: Gradio examples/import may sometimes pass a path.
+            if not isinstance(image, Image.Image):
+                try:
+                    image = Image.open(getattr(image, "name", image)).convert("RGB")
+                except Exception:
+                    return None, "Invalid image input."
+
+            # Direct mode: call DetectionService in-process.
+            if use_direct_service:
+                result = DetectionService.detect_from_pil(image, threshold)
+                result_text = format_detection_results(result)
+                if getattr(result, "success", False) and getattr(result, "detections", None):
+                    image_with_boxes = draw_bounding_boxes_pil(image, result.detections)
+                    return image_with_boxes, result_text
+                return image, result_text
+
+            # HTTP mode: check API health first
             health_status = api_client.check_health()
             if not health_status.get('success', False):
                 return image, f"❌ API is not healthy: {health_status.get('error', 'Unknown error')}"
@@ -218,15 +260,12 @@ def create_gradio_interface():
             # Call API
             result = api_client.detect_single_image(image, threshold)
 
-            # Format results
             result_text = format_detection_results(result)
 
-            # Draw bounding boxes if successful
             if result.get('success', False) and result.get('detections'):
                 image_with_boxes = draw_bounding_boxes_pil(image, result['detections'])
                 return image_with_boxes, result_text
-            else:
-                return image, result_text
+            return image, result_text
 
         except Exception as e:
             error_msg = f"❌ Prediction error: {str(e)}"
@@ -239,21 +278,48 @@ def create_gradio_interface():
             if not images:
                 return [], "Please upload at least one image."
 
-            # Check API health
+            processed_images: List[Image.Image] = []
+            result_text = f" Batch Processing Results\n\nTotal Images Uploaded: {len(images)}\n\n"
+
+            # Direct mode: call DetectionService per image.
+            if use_direct_service:
+                successful = 0
+                for i, img in enumerate(images, 1):
+                    result_text += f"Image {i}:\n"
+                    try:
+                        det_res = DetectionService.detect_from_pil(img, threshold)
+                        if getattr(det_res, "success", False):
+                            successful += 1
+                            detections = getattr(det_res, "detections", []) or []
+                            result_text += f"  ✅ Success - {len(detections)} detections\n"
+                            if detections:
+                                processed_images.append(draw_bounding_boxes_pil(img, detections))
+                            else:
+                                processed_images.append(img)
+                        else:
+                            err = (
+                                getattr(det_res, "error_code", None)
+                                or getattr(det_res, "message", None)
+                                or "Unknown error"
+                            )
+                            result_text += f"  ❌ Error: {err}\n"
+                            processed_images.append(img)
+                    except Exception as e:
+                        result_text += f"  ❌ Error: {str(e)}\n"
+                        processed_images.append(img)
+                    result_text += "\n"
+
+                result_text += f"Successful: {successful}/{len(images)}"
+                return processed_images, result_text
+
+            # HTTP mode (standalone)
             health_status = api_client.check_health()
             if not health_status.get('success', False):
                 return [], f"❌ API is not healthy: {health_status.get('error', 'Unknown error')}"
 
-            # Call batch API
             result = api_client.detect_batch_images(images, threshold)
-
             if not isinstance(result, list):
                 return [], f"❌ Batch processing error: {result.get('error', 'Unknown error')}"
-
-            # Process images and format results
-            processed_images = []
-            result_text = f"📦 Batch Processing Results\n\n"
-            result_text += f"Total Images Processed: {len(result)}\n\n"
 
             successful = 0
             for i, (img, img_result) in enumerate(zip(images, result), 1):
@@ -262,31 +328,42 @@ def create_gradio_interface():
                     successful += 1
                     detections = img_result.get('detections', [])
                     result_text += f"  ✅ Success - {len(detections)} detections\n"
-                    # Draw bounding boxes if there are detections
                     if detections:
-                        img_with_boxes = draw_bounding_boxes_pil(img, detections)
-                        processed_images.append(img_with_boxes)
+                        processed_images.append(draw_bounding_boxes_pil(img, detections))
                     else:
-                        processed_images.append(img)  # No detections, return original image
+                        processed_images.append(img)
                 else:
-                    result_text += f"  ❌ Error: {img_result.get('error', 'Unknown error')}\n"
-                    processed_images.append(img)  # Error case, return original image
+                    err = img_result.get("error") or img_result.get("error_code") or img_result.get("message") or "Unknown error"
+                    result_text += f"  ❌ Error: {err}\n"
+                    processed_images.append(img)
                 result_text += "\n"
 
-            result_text += f"Successful: {successful}/{len(result)}"
+            result_text += f"Successful: {successful}/{len(images)}"
             return processed_images, result_text
 
         except Exception as e:
             return [], f"❌ Batch prediction error: {str(e)}"
 
 
-    def convert_to_pil_images(gradio_files: List) -> List[Image.Image]:
+    def convert_to_pil_images(gradio_files: Optional[List]) -> List[Image.Image]:
         """Convert Gradio NamedString objects (file paths) to PIL Images"""
-        pil_images = []
+        if not gradio_files:
+            return []
+
+        if not isinstance(gradio_files, list):
+            gradio_files = [gradio_files]
+
+        pil_images: List[Image.Image] = []
         for file in gradio_files:
             try:
-                # In Gradio 4.13.0, file.name contains the path to the temporary file
+                if isinstance(file, Image.Image):
+                    pil_images.append(file.convert("RGB") if file.mode != "RGB" else file)
+                    continue
+
+                # In Gradio, temporary files often expose `.name`.
                 file_path = file.name if hasattr(file, 'name') else file
+                if not file_path:
+                    continue
                 # Open the image directly from the file path
                 pil_image = Image.open(file_path)
                 # Ensure the image is in RGB format (if needed by your API)
@@ -294,13 +371,24 @@ def create_gradio_interface():
                     pil_image = pil_image.convert("RGB")
                 pil_images.append(pil_image)
             except Exception as e:
-                logger.error(f"Error converting image {file_path}: {str(e)}")
+                logger.error(f"Error converting image: {str(e)}")
         return pil_images
 
 
     def check_api_health():
         """Check and display API health status"""
         logger.info(">>> check_api_health ping clicked")
+        if use_direct_service:
+            from app.services.model_service import model_service
+
+            return (
+                f"✅ API Status: Healthy\n\n"
+                f"🕒  Checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                f"🚀 Version: {settings.VERSION}\n"
+                f"⚡ Device: {str(model_service.device)}\n"
+                f"🤖 Model Loaded: {'Yes' if model_service.model is not None else 'No'}\n"
+            )
+
         health_status = api_client.check_health()
         logger.info(health_status)
 
@@ -393,16 +481,33 @@ def create_gradio_interface():
             outputs=[batch_output_images, batch_output_text],
             api_visibility=SHOW_GRADIO_API
         )
-        # Examples
-        gr.Examples(
-            examples=[
-                ["static/examples/image1.png"],
-                ["static/examples/image2.png"],
-                ["static/examples/image3.png"]
-            ],
-            inputs=single_image,
-            label="Try these example images (local)"
-        )
+        # Examples (only include files that exist to avoid runtime errors)
+        example_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "static", "examples"))
+        example_candidates = [
+            os.path.join(example_dir, "image1.png"),
+            os.path.join(example_dir, "image2.png"),
+            os.path.join(example_dir, "image3.png"),
+        ]
+        # Use in-memory PIL images (not filesystem paths). When mounted under
+        # FastAPI at /ui, path-based examples can trigger broken /gradio_api/file=...
+        # requests (missing /ui prefix). Passing PIL avoids that file-proxy route.
+        example_rows = []
+        for p in example_candidates:
+            if not os.path.exists(p):
+                continue
+            try:
+                with Image.open(p) as im:
+                    example_rows.append([im.convert("RGB").copy()])
+            except Exception as e:
+                logger.warning("Could not load example image %s: %s", p, e)
+        if example_rows:
+            gr.Examples(
+                examples=example_rows,
+                inputs=single_image,
+                label="Try these example images (local)",
+            )
+        else:
+            gr.Markdown(f"### No example images found at `{example_dir}`")
 
         # Event handlers
         health_btn.click(
