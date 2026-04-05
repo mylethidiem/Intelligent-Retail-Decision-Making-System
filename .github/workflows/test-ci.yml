@@ -27,11 +27,11 @@ jobs:
 
       - name: Install PyTorch (CPU)
         run: |
-          pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install dependencies
         run: |
-          pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run tests with coverage
         env:
