@@ -328,6 +328,12 @@ Access the Gradio UI at: 🌐 `http://localhost:7860`
 curl -X GET "http://localhost:5050/api/v1/health" -H "X-Token: your-jwt-token"
 curl -X GET "http://localhost:5050/api/v1/health" -H "X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJleHAiOjE3NjE1NDI3MjB9.8f4Omm0kBFWDUUd4SBKwYS72mHEOIgWEGRp8zwmywR0"
 ```
+### 10. 🧪 Testing
+Run command
+```bash
+
+python3 -m pytest --cov=app --cov-report=term-missing -v && TESTING=1
+```
 
 ## 🛠️ Troubleshooting
 
